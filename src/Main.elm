@@ -23,8 +23,7 @@ type alias Model =
     { include : String
     , exclude : String
     , potentialAnswers : List String
-    , greenPositions : String
-    , yellowPositions : String
+    , positions : String
     }
 
 
@@ -32,8 +31,7 @@ type Msg
     = NoOp
     | UpdateExcludes String
     | UpdateIncludes String
-    | UpdateYellowPositions String
-    | UpdateGreenPositions String
+    | UpdatePositions String
     | ComputePotentialAnswers
 
 
@@ -41,8 +39,7 @@ init _ =
     ( { include = ""
       , exclude = ""
       , potentialAnswers = []
-      , greenPositions = ""
-      , yellowPositions = ""
+      , positions = ""
       }
     , Cmd.none
     )
@@ -83,26 +80,11 @@ view model =
             ]
         , H.div []
             [ H.input
-                [ Attr.value model.yellowPositions
-                , Ev.onInput UpdateYellowPositions
-                , Attr.placeholder "Yellows"
+                [ Attr.value model.positions
+                , Ev.onInput UpdatePositions
+                , Attr.placeholder "Positions"
                 , Attr.class
-                    (if String.isEmpty model.yellowPositions then
-                        "empty-input"
-
-                     else
-                        ""
-                    )
-                ]
-                []
-            ]
-        , H.div []
-            [ H.input
-                [ Attr.value model.greenPositions
-                , Ev.onInput UpdateGreenPositions
-                , Attr.placeholder "Greens"
-                , Attr.class
-                    (if String.isEmpty model.greenPositions then
+                    (if String.isEmpty model.positions then
                         "empty-input"
 
                      else
@@ -126,11 +108,8 @@ update msg model =
         UpdateIncludes str ->
             ( { model | include = String.trim str }, msgToCmd ComputePotentialAnswers )
 
-        UpdateYellowPositions str ->
-            ( { model | yellowPositions = String.trim str }, msgToCmd ComputePotentialAnswers )
-
-        UpdateGreenPositions str ->
-            ( { model | greenPositions = String.trim str }, msgToCmd ComputePotentialAnswers )
+        UpdatePositions str ->
+            ( { model | positions = String.trim str }, msgToCmd ComputePotentialAnswers )
 
         ComputePotentialAnswers ->
             ( { model
@@ -138,8 +117,7 @@ update msg model =
                     if
                         String.isEmpty model.exclude
                             && String.isEmpty model.include
-                            && String.isEmpty model.greenPositions
-                            && String.isEmpty model.yellowPositions
+                            && String.isEmpty model.positions
                     then
                         []
 
@@ -147,8 +125,7 @@ update msg model =
                         Words.words
                             |> API.exclude model.exclude
                             |> API.filterByLetters model.include
-                            |> API.filterByPosition model.greenPositions
-                            |> API.filterByPositionNotMultiple (String.split "," model.yellowPositions)
+                            |> API.filterByPos (String.split "," model.positions)
               }
             , Cmd.none
             )
