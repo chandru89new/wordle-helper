@@ -135,11 +135,20 @@ update msg model =
         ComputePotentialAnswers ->
             ( { model
                 | potentialAnswers =
-                    Words.words
-                        |> API.exclude model.exclude
-                        |> API.filterByLetters model.include
-                        |> API.filterByPosition model.greenPositions
-                        |> API.filterByPositionNotMultiple (String.split "," model.yellowPositions)
+                    if
+                        String.isEmpty model.exclude
+                            && String.isEmpty model.include
+                            && String.isEmpty model.greenPositions
+                            && String.isEmpty model.yellowPositions
+                    then
+                        []
+
+                    else
+                        Words.words
+                            |> API.exclude model.exclude
+                            |> API.filterByLetters model.include
+                            |> API.filterByPosition model.greenPositions
+                            |> API.filterByPositionNotMultiple (String.split "," model.yellowPositions)
               }
             , Cmd.none
             )
