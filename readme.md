@@ -1,0 +1,1 @@
+Kind of a helper to solve wordle.

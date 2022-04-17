@@ -1,0 +1,12 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+input {
+  @apply border rounded px-2 py-1;
+  letter-spacing: 0.5rem;
+}
+
+input.empty-input {
+  letter-spacing: unset !important;
+}
